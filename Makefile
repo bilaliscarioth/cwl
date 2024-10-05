@@ -1,24 +1,26 @@
-# $OpenBSD: Makefile,v 1.25 2017/07/14 17:23:38 okan Exp $
-
-.include <bsd.xconf.mk>
-
 PROG=		cwm
 
-SRCS=		calmwm.c screen.c xmalloc.c client.c menu.c \
-		search.c util.c xutil.c conf.c xevents.c group.c \
-		kbfunc.c parse.y
+OBJS=		src/calmwm.o src/menu.o 		\
+		src/search.o src/util.o src/conf.o	\
+		src/group.o src/kbfunc.o 		\
 
 CPPFLAGS+=	-I${X11BASE}/include -I${X11BASE}/include/freetype2 -I${.CURDIR}
 
-CFLAGS+=	-Wall
-YFLAGS=
-LDADD+=		-L${X11BASE}/lib -lXft -lXrender -lX11 -lxcb -lXau -lXdmcp \
-		-lfontconfig -lexpat -lfreetype -lz -lXrandr -lXext
+CFLAGS = 	-O2 -Iinclude -std=c11 \
+		-Wall -Wextra -Wconversion -Wdeprecated -Werror	\
+		-Wpedantic -Wshadow -Wuninitialized -Wunused
 
-MANDIR=		${X11BASE}/man/man
-MAN=		cwm.1 cwmrc.5
+CFLAGS += $(pkg-config --cflags wayland-server pixman-1)
 
-obj: _xenocara_obj
+LDFLAGS = $(pkg-config --libs wayland-server pixman-1)
 
-.include <bsd.prog.mk>
-.include <bsd.xorg.mk>
+.SUFFIXES: .c .o
+.c.o:
+	${CC} ${CFLAGS} -fPIC $< -c -o $@ ${LDFLAGS}
+
+build: cwl
+
+cwl: ${OBJS}
+	@mkdir -p release
+	${CC} ${CFLAGS} ${OBJS} -shared -o release/libcwl.so
+	${CC} ${CFLAGS} src/main.c -o release/minishell ./release/libcwl.so ${LDFLAGS}	

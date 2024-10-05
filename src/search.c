@@ -57,7 +57,7 @@ match_substr(char *sub, char *str, int zeroidx)
 	if (zeroidx)
 		flen = 0;
 	else
-		flen = len - sublen;
+	  flen = (unsigned int) (len - sublen);
 
 	for (n = 0; n <= flen; n++)
 		if (strncasecmp(sub, str + n, sublen) == 0)

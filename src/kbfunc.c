@@ -142,15 +142,15 @@ kbfunc_client_move_kb(void *ctx, struct cargs *cargs)
 
 	client_move(cc);
 	client_ptr_inbound(cc, 1);
-	XSync(X_Dpy, True);
+	//XSync(X_Dpy, True);
 }
 
 static void
 kbfunc_client_move_mb(void *ctx, struct cargs *cargs)
 {
 	struct client_ctx	*cc = ctx;
-	XEvent			 ev;
-	Time			 ltime = 0;
+	//XEvent			 ev;
+	//Time			 ltime = 0;
 	struct screen_ctx	*sc = cc->sc;
 	struct geom		 area;
 	int			 move = 1;

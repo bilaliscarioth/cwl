@@ -133,7 +133,11 @@ log_debug(int level, const char *func, const char *msg, ...)
 		return;
 
 	va_start(ap, msg);
-	xasprintf(&fmt, "debug%d: %s: %s", level, func, msg);
+	
+	int i = vasprintf(fmt, msg, ap);
+	if (i == -1)
+		err(1, "vasprintf");
+	
 	log_msg(fmt, ap);
 	free(fmt);
 	va_end(ap);
